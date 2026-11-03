@@ -1,0 +1,59 @@
+<UserControl x:Class="YfgDesk.Client.Views.StatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BrandNavyBrush}"
+             FlowDirection="RightToLeft">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="وضعیت اتصال" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <!-- Connection state row -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="وضعیت:" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <TextBlock Grid.Column="1" Text="{Binding ConnectionState}" FontWeight="SemiBold"/>
+        </Grid>
+
+        <!-- Tier -->
+        <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="لایهٔ اتصال:" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <TextBlock Grid.Column="1" Text="{Binding Tier}" FontWeight="SemiBold"/>
+        </Grid>
+
+        <!-- Heartbeat -->
+        <Grid Grid.Row="3" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="نبض سرور:" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <TextBlock Grid.Column="1" Text="{Binding HeartbeatState}"/>
+        </Grid>
+
+        <!-- Last error -->
+        <Grid Grid.Row="4" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="آخرین خطا:" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <TextBlock Grid.Column="1" Text="{Binding LastError}" TextWrapping="Wrap"
+                       Foreground="{StaticResource BrandErrorBrush}"/>
+        </Grid>
+    </Grid>
+</UserControl>

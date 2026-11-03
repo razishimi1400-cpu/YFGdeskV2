@@ -1,0 +1,115 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Multi-targeted WPF + headless client.
+
+      net10.0-windows  — full WPF UI + WebView2 + DPAPI + SendInput + Argon2.
+                          Only builds on Windows (requires Windows Desktop SDK
+                          reference assemblies that don't ship on Linux/macOS).
+      net10.0           — pure-C# headless subset: device identity, discovery,
+                          connection orchestrator, host-consent state machine,
+                          local cache, signaling client. Used by the xUnit tests
+                          that run on Linux CI.
+
+    The WPF / WebView2 / SendInput files are excluded from the net10.0 build
+    via Condition="'$(TargetFramework)' != 'net10.0-windows'".
+  -->
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-windows;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>YfgDesk.Client</AssemblyName>
+    <RootNamespace>YfgDesk.Client</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <NeutralLanguage>fa-IR</NeutralLanguage>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- WPF + WinExe only on the Windows target. -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>false</UseWindowsForms>
+    <OutputType>WinExe</OutputType>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <!--
+      Allow restoring the Windows TFM on Linux. Restore only downloads packages;
+      it never invokes the Windows reference assemblies. This lets `dotnet build
+      -f net10.0` succeed on Linux CI while still leaving the net10.0-windows
+      target available for Windows builds.
+
+      NOTE: On a Linux host the net10.0-windows reference assemblies are NOT
+      installed, so `dotnet build -f net10.0-windows` will fail with
+      "Microsoft.Windows.SDK.Ref" / "PresentationFramework" not found. That is
+      expected — Windows builds must be run on Windows (or via a Windows SDK
+      NuGet package ref added later).
+    -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <!-- Library output on the headless target. -->
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net10.0-windows'">
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\shared\YfgDesk.Shared.csproj" />
+  </ItemGroup>
+
+  <!-- Expose internal helpers (EncodeBeacon, TryDecodeBeacon, etc.) to the
+       tests project so unit tests can exercise the codec without touching the
+       network. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="YfgDesk.Client.Tests" />
+  </ItemGroup>
+
+  <!-- Windows-only NuGet packages: Argon2 (RFC 9106) + WebView2 runtime. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+  </ItemGroup>
+
+  <!-- The Tests/ subdirectory has its own csproj; never compile its sources from here. -->
+  <ItemGroup>
+    <Compile Remove="Tests\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <!--
+    On the headless net10.0 target, exclude WPF / WebView2 / Windows-only
+    services. The classes that ARE compiled on both targets are the
+    "Linux-testable subset": Options, LocalCache, SecureStorage,
+    DeviceIdentity, DiscoveryClient, ConnectionOrchestrator,
+    HostConsentCoordinator, SignalingClient, TurnClient, UnattendedStore
+    (the last has a Linux stub via #if), and all ViewModels.
+  -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0-windows'">
+    <Compile Remove="App.xaml.cs" />
+    <Compile Remove="MainWindow.xaml.cs" />
+    <Compile Remove="Views\**\*.cs" />
+    <Compile Remove="Services\PeerConnection.cs" />
+    <Compile Remove="Services\ScreenCaptureService.cs" />
+    <Compile Remove="Services\InputInjectionService.cs" />
+    <Compile Remove="Services\FileTransferService.cs" />
+    <Page Remove="**\*.xaml" />
+    <ApplicationDefinition Remove="**\*.xaml" />
+    <None Remove="Assets\**" />
+    <None Remove="MediaAssets\**" />
+  </ItemGroup>
+
+  <!-- On Windows, include the WebView2 host HTML as embedded resources / content. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+    <Content Include="MediaAssets\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Assets\yfgdesk-mark.svg" />
+  </ItemGroup>
+
+</Project>

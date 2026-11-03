@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/server/">
+    <Project Path="server/YfgDesk.Server.csproj" />
+  </Folder>
+  <Folder Name="/server/Tests/">
+    <Project Path="server/Tests/YfgDesk.Tests.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/YfgDesk.Shared.csproj" />
+  </Folder>
+</Solution>

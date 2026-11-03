@@ -1,0 +1,83 @@
+<Window x:Class="YfgDesk.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:YfgDesk.Client.Views"
+        xmlns:vm="clr-namespace:YfgDesk.Client.ViewModels"
+        Title="YFGDESK — پشتیبانی از راه دور"
+        Height="720" Width="1100"
+        Background="{StaticResource BrandNavyBrush}"
+        FlowDirection="RightToLeft"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top bar: brand + device id + lang toggle -->
+        <Border Grid.Row="0" Background="{StaticResource BrandNavyLightBrush}" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
+                    <Image Source="/Assets/yfgdesk-mark.svg" Width="28" Height="28" Margin="0,0,12,0"/>
+                    <TextBlock Text="YFGDESK" FontSize="18" FontWeight="Bold"
+                               Foreground="{StaticResource BrandTealBrush}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="شناسهٔ دستگاه:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding DeviceId}" FontWeight="SemiBold"
+                               FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="کپی" Padding="8,2" Click="OnCopyDeviceId"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                    <Button Style="{StaticResource SecondaryButton}" Content="FA" Padding="10,2" Click="OnToggleLang" Tag="fa"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="EN" Padding="10,2" Margin="6,0,0,0" Click="OnToggleLang" Tag="en"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Tab control: Host + Connect -->
+        <TabControl Grid.Row="1" Background="{StaticResource BrandNavyBrush}" BorderThickness="0"
+                    SelectedIndex="{Binding SelectedTab}"
+                    Padding="0">
+            <TabItem Header="میزبان" FontSize="14" Padding="20,8">
+                <views:HostView DataContext="{Binding Host}"/>
+            </TabItem>
+            <TabItem Header="اتصال" FontSize="14" Padding="20,8">
+                <views:ViewerView DataContext="{Binding Viewer}"/>
+            </TabItem>
+            <TabItem Header="بدون نظارت" FontSize="14" Padding="20,8">
+                <views:UnattendedView DataContext="{Binding Unattended}"/>
+            </TabItem>
+            <TabItem Header="وضعیت" FontSize="14" Padding="20,8">
+                <views:StatusView DataContext="{Binding Status}"/>
+            </TabItem>
+        </TabControl>
+
+        <!-- Sticky footer: protocol version + heartbeat -->
+        <Border Grid.Row="2" Background="{StaticResource BrandNavyLightBrush}" Padding="16,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding ProtocolVersionLabel}"
+                           Foreground="{StaticResource ForegroundDimBrush}" FontSize="11"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center">
+                        <Ellipse.Fill>
+                            <SolidColorBrush x:Name="HeartbeatDot" Color="{StaticResource BrandWarn}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock x:Name="HeartbeatLabel" Text="—"
+                               Foreground="{StaticResource ForegroundDimBrush}" FontSize="11"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

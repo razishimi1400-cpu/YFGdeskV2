@@ -1,0 +1,54 @@
+<UserControl x:Class="YfgDesk.Client.Views.UnattendedView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BrandNavyBrush}"
+             FlowDirection="RightToLeft">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Enable / disable toggle -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="حالت بدون نظارت" FontSize="18" FontWeight="Bold" Margin="0,0,0,4"/>
+            <TextBlock Text="با فعال‌سازی این حالت، میزبان بدون نیاز به تأیید دستی دسترسی خواهد داشت. رمز فقط محلی ذخیره می‌شود و هرگز به سرور ارسال نمی‌گردد."
+                       TextWrapping="Wrap" Foreground="{StaticResource ForegroundDimBrush}"
+                       Margin="0,0,0,12"/>
+            <CheckBox Content="فعال‌سازی حالت بدون نظارت" IsChecked="{Binding Enabled}" IsEnabled="False"/>
+        </StackPanel>
+
+        <!-- Set password -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
+            <TextBlock Text="رمز جدید" FontSize="12" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <PasswordBox x:Name="PwdBox" PasswordChanged="OnPwdChanged" Width="320" HorizontalAlignment="Left" Padding="8"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="0,0,0,16">
+            <TextBlock Text="تکرار رمز" FontSize="12" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <PasswordBox x:Name="PwdConfirmBox" PasswordChanged="OnPwdConfirmChanged" Width="320" HorizontalAlignment="Left" Padding="8"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Style="{StaticResource PrimaryButton}" Content="فعال‌سازی"
+                    Click="OnEnable" Padding="24,8" Margin="0,0,8,0"/>
+            <Button Style="{StaticResource SecondaryButton}" Content="غیرفعال‌سازی"
+                    Click="OnDisable" Padding="24,8"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="{StaticResource BrandTealBrush}" Margin="0,0,0,12"/>
+
+        <!-- Unlock (test verifier) -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock Text="رمز را وارد کنید برای تست:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <PasswordBox x:Name="UnlockBox" PasswordChanged="OnUnlockChanged" Width="200" Padding="6"/>
+            <Button Style="{StaticResource SecondaryButton}" Content="تست" Click="OnUnlock" Padding="16,4" Margin="8,0,0,0"/>
+            <TextBlock Text="{Binding FailureCount, StringFormat='شکست: {0}'}" Margin="16,0,0,0" VerticalAlignment="Center"
+                       Foreground="{StaticResource BrandWarnBrush}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

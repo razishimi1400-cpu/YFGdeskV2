@@ -1,0 +1,73 @@
+<UserControl x:Class="YfgDesk.Client.Views.HostView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BrandNavyBrush}"
+             FlowDirection="RightToLeft">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Device ID display -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="شناسهٔ شما" FontSize="12" Foreground="{StaticResource ForegroundDimBrush}"/>
+            <TextBlock Text="{Binding DeviceId}" FontSize="36" FontWeight="Bold"
+                       FontFamily="Consolas" Foreground="{StaticResource BrandTealBrush}"/>
+        </StackPanel>
+
+        <!-- Share screen / stop sharing -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Style="{StaticResource PrimaryButton}" Content="اشتراک صفحه"
+                    Click="OnShareScreen" Padding="24,10" Margin="0,0,8,0"/>
+            <Button Style="{StaticResource DangerButton}" Content="توقف فوری"
+                    Click="OnEmergencyStop" Padding="24,10"/>
+        </StackPanel>
+
+        <!-- Incoming request dialog (conditionally visible) -->
+        <Border Grid.Row="2" Background="{StaticResource BackgroundPanelBrush}"
+                CornerRadius="6" Padding="16" Margin="0,0,0,16"
+                Visibility="{Binding IncomingRequestVisible, Converter={StaticResource BoolToVisConverter}, FallbackValue=Collapsed}">
+            <StackPanel>
+                <TextBlock Text="درخواست اتصال ورودی" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="از: "/>
+                    <TextBlock Text="{Binding ViewerDisplayName}" FontWeight="SemiBold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="شناسه: "/>
+                    <TextBlock Text="{Binding ViewerDeviceId}" FontFamily="Consolas"/>
+                </StackPanel>
+                <TextBlock Text="دسترسی‌های درخواست‌شده:" Margin="0,0,0,4"/>
+                <StackPanel Orientation="Vertical" Margin="0,0,0,8">
+                    <CheckBox Content="مشاهده صفحه" IsChecked="{Binding GrantViewScreen}" IsEnabled="{Binding RequestedViewScreen}"/>
+                    <CheckBox Content="کنترل از راه دور" IsChecked="{Binding GrantRemoteControl}" IsEnabled="{Binding RequestedRemoteControl}"/>
+                    <CheckBox Content="انتقال فایل" IsChecked="{Binding GrantFileTransfer}" IsEnabled="{Binding RequestedFileTransfer}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource PrimaryButton}" Content="تأیید" Click="OnAccept" Padding="20,8" Margin="0,0,8,0"/>
+                    <Button Style="{StaticResource DangerButton}" Content="رد" Click="OnReject" Padding="20,8"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Empty area: future screen picker / monitor selector -->
+        <TextBlock Grid.Row="3" Text="وضعیت میزبان: آمادهٔ اتصال"
+                   Foreground="{StaticResource ForegroundDimBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <!-- Bottom state -->
+        <Border Grid.Row="4" Background="{StaticResource BrandNavyLightBrush}" Padding="10,6">
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="10" Height="10" Margin="0,0,6,0" VerticalAlignment="Center">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{StaticResource BrandOk}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="میزبان آماده" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

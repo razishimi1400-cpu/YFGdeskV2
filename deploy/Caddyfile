@@ -1,0 +1,28 @@
+# YFGDESK v2 — Reverse proxy (Caddy)
+# Auto HTTPS via Let's Encrypt.
+
+{$YFGDESK_DOMAIN} {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+	}
+
+	# WebSocket upgrade to the signaling hub
+	@ws {
+		header Connection *Upgrade*
+		header Upgrade websocket
+	}
+	handle /ws {
+		reverse_proxy yfgdesk-server:8080
+	}
+
+	# REST API
+	handle /api/* {
+		reverse_proxy yfgdesk-server:8080
+	}
+
+	# Everything else → 404 (no public landing page)
+	respond 404
+}

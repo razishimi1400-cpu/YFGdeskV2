@@ -1,0 +1,43 @@
+# Build output
+**/bin/
+**/obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+dev.log
+server.log
+
+# Secrets
+.env
+.env.local
+appsettings.Production.json
+appsettings.*.user.json
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+
+# Publish output
+publish/
+artifacts/
+*.zip
+
+# OS temp
+*.swp
+*~
