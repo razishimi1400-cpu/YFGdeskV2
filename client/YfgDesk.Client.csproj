@@ -37,6 +37,7 @@
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+    <ApplicationIcon>Assets\yfgdesk-mark.ico</ApplicationIcon>
     <!--
       Allow restoring the Windows TFM on Linux. Restore only downloads packages;
       it never invokes the Windows reference assemblies. This lets `dotnet build
@@ -111,7 +112,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Assets\yfgdesk-mark.svg" />
+    <Resource Include="Assets\yfgdesk-mark-logo.png" />
     <Content Include="Assets\yfgdesk-mark.ico" />
+    <Content Include="Assets\yfgdesk-mark.png" />
   </ItemGroup>
 
 </Project>
