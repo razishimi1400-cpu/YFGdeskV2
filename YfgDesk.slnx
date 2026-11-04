@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/installer/">
+    <Project Path="installer/YfgDesk.Installer.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" />
+    <Project Path="installer/YfgDesk.ServerInstaller.wixproj" Type="b7dd6f7e-def8-4e67-b5b7-07ef123db6f0" />
+  </Folder>
   <Folder Name="/server/">
     <Project Path="server/YfgDesk.Server.csproj" />
   </Folder>

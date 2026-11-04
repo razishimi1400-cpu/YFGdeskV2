@@ -6,16 +6,19 @@
     <Platform>x64</Platform>
     <ProductVersion>2.0.0</ProductVersion>
     <OutputName>YFGdesk-Server-Setup</OutputName>
-    <Cabinet>YFGdeskServer.cab</Cabinet>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SuppressValidation>false</SuppressValidation>
+    <Cabinet>YFGdeskServer.cab</Cabinet>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="ServerPackage.wxs" />
   </ItemGroup>
 
+  <!-- Harvest the published server files into the MSI.
+       Run build-installer.bat first to populate .\publish\server-single\ -->
   <ItemGroup>
-    <HarvestDirectory Include="$(MSBuildThisFileDirectory)..\publish\server-single">
+    <HarvestDirectory Include="$(MSBuildProjectDirectory)\..\publish\server-single">
       <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
       <ComponentGroupName>HarvestedServerFiles</ComponentGroupName>
       <SuppressRootDirectory>true</SuppressRootDirectory>

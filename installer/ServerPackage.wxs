@@ -5,52 +5,54 @@
   Produces YFGdesk-Server-Setup.msi — installs the signaling/TURN server
   as a Windows Service that starts automatically on boot.
 
-  Target deployment: a Windows server (or VPS) that hosts the central
-  discovery + signaling server for clients to connect to.
+  Prerequisite: publish the server first via build-installer.bat
+  (the installer harvests files from .\publish\server-single\).
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package
     Name="YFG YASTA Server"
     Language="1065"
     Codepage="1256"
-    Manufacturer="YFG SYSTEMS"
+    Manufacturer="YFGSYSTEMS"
     Version="2.0.0.0"
     UpgradeCode="B7C9D1E2-3F4A-5B6C-7D8E-9F0A1B2C3D4E">
 
     <SummaryInformation
       Description="YFG YASTA Signaling + TURN Server v2.0"
-      Manufacturer="YFG SYSTEMS"
+      Manufacturer="YFGSYSTEMS"
       Codepage="1256"
-      Keywords="YFG,YASTA,Server,Signaling,TURN,Installer" />
+      Keywords="YFG;YASTA;Server;Signaling;TURN;Installer" />
 
     <MajorUpgrade
       DowngradeErrorMessage="A newer version of YFG YASTA Server is already installed."
-      Schedule="afterInstallValidate" />
+      Schedule="afterInstallValidate"
+      AllowSameVersion="yes" />
 
     <Media Id="1" Cabinet="YFGdeskServer.cab" EmbedCab="yes" />
+
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_InstallDir" />
     <Property Id="ARPPRODUCTICON" Value="YfgServerIcon" />
-    <Property Id="ARPCONTACT" Value="YFG SYSTEMS" />
+    <Property Id="ARPCONTACT" Value="YFGSYSTEMS" />
     <Property Id="ARPHELPLINK" Value="https://github.com/razishimi1400-cpu/YFGdeskV2" />
     <Property Id="ARPNOREPAIR" Value="yes" />
+    <Property Id="ARPNOMODIFY" Value="yes" />
 
     <Feature Id="CompleteFeature" Title="YFG YASTA Server" Level="1"
-             Description="YFG YASTA signaling + TURN server.">
+             Description="YFG YASTA signaling + TURN credential server.">
       <ComponentGroupRef Id="HarvestedServerFiles" />
       <ComponentRef Id="ServerShortcutStartMenu" />
       <ComponentRef Id="ServerServiceInstall" />
+      <ComponentRef Id="ServerRegistryInstallInfo" />
     </Feature>
 
-    <Launch Condition="Privileged" Message="Administrator access is required to install the server." />
-    <Launch Condition="VersionNT64" Value="YFG YASTA Server requires a 64-bit version of Windows." />
+    <Launch Condition="Privileged" Message="Administrator access is required to install the YFG YASTA Server." />
+    <Launch Condition="VersionNT64" Message="YFG YASTA Server requires a 64-bit version of Windows." />
   </Package>
 
   <Fragment Id="Folders">
     <StandardDirectory Id="ProgramFiles64Folder">
-      <Directory Id="YfgSystemFolder" Name="YFGSYSTEMS">
-        <Directory Id="INSTALLFOLDER" Name="YFGYastaServer" />
-      </Directory>
+      <Directory Id="INSTALLFOLDER" Name="YFGYastaServer" />
     </StandardDirectory>
 
     <StandardDirectory Id="ProgramMenuFolder">
@@ -69,7 +71,7 @@
                   Icon="YfgServerIcon" />
         <RemoveFolder Id="RemoveServerProgramMenuFolder" On="uninstall" />
         <RegistryValue Root="HKLM"
-                       Key="SOFTWARE\YFG SYSTEMS\YFG YASTA Server"
+                       Key="SOFTWARE\YFGYastaServer"
                        Name="StartMenuShortcut"
                        Type="integer"
                        Value="1"
@@ -78,10 +80,10 @@
     </DirectoryRef>
   </Fragment>
 
+  <!-- Windows Service installation -->
   <Fragment Id="ServerService">
     <DirectoryRef Id="INSTALLFOLDER">
       <Component Id="ServerServiceInstall" Guid="{C9D1E2F4-3333-4444-5555-666677778888}">
-        <!-- Install as a Windows Service -->
         <ServiceInstall
           Id="YfgServerService"
           Name="YfgYastaServer"
@@ -90,9 +92,9 @@
           Type="ownProcess"
           Start="auto"
           ErrorControl="normal"
-          Interactive="no">
-          <ServiceDependency Id="Eventlog" />
-        </ServiceInstall>
+          Interactive="no"
+          Arguments="--service" />
+
         <ServiceControl
           Id="YfgServerServiceControl"
           Name="YfgYastaServer"
@@ -100,16 +102,43 @@
           Stop="both"
           Remove="uninstall"
           Wait="yes" />
-        <!-- Environment variables the server reads at startup -->
-        <Environment Id="YfgDb" Name="YFGDESK_DB" Value="[INSTALLFOLDER]yfgdesk.db" Permanent="no" Part="all" Action="set" System="yes" />
-        <Environment Id="YfgTokenSecret" Name="YFGDESK_TOKEN_SECRET" Value="REPLACE_AT_INSTALL" Permanent="no" Part="all" Action="set" System="yes" />
-        <Environment Id="AspnetUrls" Name="ASPNETCORE_URLS" Value="http://0.0.0.0:7070" Permanent="no" Part="all" Action="set" System="yes" />
-        <Environment Id="AspnetEnv" Name="ASPNETCORE_ENVIRONMENT" Value="Production" Permanent="no" Part="all" Action="set" System="yes" />
+
+        <!-- Environment variables for the service -->
+        <Environment Id="YfgDb" Name="YFGDESK_DB"
+                      Value="[INSTALLFOLDER]yfgdesk.db"
+                      Permanent="no" Part="all" Action="set" System="yes" />
+        <Environment Id="AspnetUrls" Name="ASPNETCORE_URLS"
+                      Value="http://0.0.0.0:7070"
+                      Permanent="no" Part="all" Action="set" System="yes" />
+        <Environment Id="AspnetEnv" Name="ASPNETCORE_ENVIRONMENT"
+                      Value="Production"
+                      Permanent="no" Part="all" Action="set" System="yes" />
+
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFGYastaServer"
+                       Name="ServiceInstalled"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="ServerRegistryInstallInfo" Guid="{C9D1E2F4-5555-6666-7777-888899990000}">
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFGYastaServer"
+                       Name="InstallPath"
+                       Type="string"
+                       Value="[INSTALLFOLDER]"
+                       KeyPath="yes" />
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFGYastaServer"
+                       Name="Version"
+                       Type="string"
+                       Value="2.0.0.0" />
       </Component>
     </DirectoryRef>
   </Fragment>
 
   <Fragment Id="Icons">
-    <Icon Id="YfgServerIcon" SourceFile="Assets\yfgdesk-mark.ico" />
+    <Icon Id="YfgServerIcon" SourceFile="$(MSBuildProjectDirectory)\..\client\Assets\yfgdesk-mark.ico" />
   </Fragment>
 </Wix>

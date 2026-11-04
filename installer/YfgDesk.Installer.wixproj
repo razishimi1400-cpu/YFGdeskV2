@@ -6,17 +6,20 @@
     <Platform>x64</Platform>
     <ProductVersion>2.0.0</ProductVersion>
     <OutputName>YFGdesk-Setup</OutputName>
-    <Cabinet>YFGdesk.cab</Cabinet>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <SuppressValidation>false</SuppressValidation>
+    <Cabinet>YFGdesk.cab</Cabinet>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Package.wxs" />
+    <EmbeddedResource Include="Strings.fa-IR.wxl" />
   </ItemGroup>
 
+  <!-- Harvest the published client files into the MSI.
+       Run build-installer.bat first to populate .\publish\client-single\ -->
   <ItemGroup>
-    <HarvestDirectory Include="$(MSBuildThisFileDirectory)..\publish\client-single">
+    <HarvestDirectory Include="$(MSBuildProjectDirectory)\..\publish\client-single">
       <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
       <ComponentGroupName>HarvestedClientFiles</ComponentGroupName>
       <SuppressRootDirectory>true</SuppressRootDirectory>
