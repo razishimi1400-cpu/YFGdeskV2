@@ -16,7 +16,7 @@
   -->
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0-windows;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -30,31 +30,19 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <!-- WPF + WinExe only on the Windows target. -->
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+  <!-- WPF + WinExe only on the Windows targets. -->
+  <PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">
     <UseWPF>true</UseWPF>
     <UseWindowsForms>false</UseWindowsForms>
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <ApplicationIcon>Assets\yfgdesk-mark.ico</ApplicationIcon>
-    <!--
-      Allow restoring the Windows TFM on Linux. Restore only downloads packages;
-      it never invokes the Windows reference assemblies. This lets `dotnet build
-      -f net10.0` succeed on Linux CI while still leaving the net10.0-windows
-      target available for Windows builds.
-
-      NOTE: On a Linux host the net10.0-windows reference assemblies are NOT
-      installed, so `dotnet build -f net10.0-windows` will fail with
-      "Microsoft.Windows.SDK.Ref" / "PresentationFramework" not found. That is
-      expected — Windows builds must be run on Windows (or via a Windows SDK
-      NuGet package ref added later).
-    -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
-  <!-- Library output on the headless target. -->
-  <PropertyGroup Condition="'$(TargetFramework)' != 'net10.0-windows'">
+  <!-- Library output on the headless targets. -->
+  <PropertyGroup Condition="!$(TargetFramework.Contains('-windows'))">
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
@@ -70,7 +58,7 @@
   </ItemGroup>
 
   <!-- Windows-only NuGet packages: Argon2 (RFC 9106) + WebView2 runtime. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
   </ItemGroup>
@@ -82,14 +70,11 @@
   </ItemGroup>
 
   <!--
-    On the headless net10.0 target, exclude WPF / WebView2 / Windows-only
+    On the headless (non-Windows) targets, exclude WPF / WebView2 / Windows-only
     services. The classes that ARE compiled on both targets are the
-    "Linux-testable subset": Options, LocalCache, SecureStorage,
-    DeviceIdentity, DiscoveryClient, ConnectionOrchestrator,
-    HostConsentCoordinator, SignalingClient, TurnClient, UnattendedStore
-    (the last has a Linux stub via #if), and all ViewModels.
+    "Linux-testable subset".
   -->
-  <ItemGroup Condition="'$(TargetFramework)' != 'net10.0-windows'">
+  <ItemGroup Condition="!$(TargetFramework.Contains('-windows'))">
     <Compile Remove="App.xaml.cs" />
     <Compile Remove="MainWindow.xaml.cs" />
     <Compile Remove="Views\**\*.cs" />
@@ -104,7 +89,7 @@
   </ItemGroup>
 
   <!-- On Windows, include the WebView2 host HTML as embedded resources / content. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+  <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
     <Content Include="MediaAssets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

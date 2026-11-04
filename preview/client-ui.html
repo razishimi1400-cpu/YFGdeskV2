@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YFG YASTA Client UI Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #F4F5F7;
+    color: #1F2937;
+    width: 920px;
+    height: 640px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E1E4E8;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-logo { display: flex; align-items: center; gap: 2px; }
+  .letter {
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1;
+  }
+  .letter-y { color: #E4342B; }
+  .letter-f { color: #F6A800; }
+  .letter-g { color: #1D71C8; }
+  .brand-text { display: flex; flex-direction: column; }
+  .brand-name { font-size: 16px; font-weight: bold; color: #1A1A2E; }
+  .brand-sub { font-size: 9px; color: #9CA3AF; letter-spacing: 1px; }
+
+  .status-pill {
+    background: #EEF4FF;
+    border-radius: 12px;
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #9CA3AF; }
+  .status-text { font-size: 12px; color: #6B7280; }
+
+  .lang-toggle { display: flex; gap: 6px; }
+  .lang-btn {
+    border: 1px solid #E1E4E8;
+    background: transparent;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: #1F2937;
+    cursor: pointer;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    padding: 12px 20px 0 20px;
+    background: transparent;
+    border-bottom: 1px solid #E1E4E8;
+  }
+  .tab {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6B7280;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab.active {
+    color: #E4342B;
+    font-weight: 600;
+    border-bottom-color: #E4342B;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .content { flex: 1; padding: 24px 20px; overflow-y: auto; }
+
+  /* ===== HOST TAB ===== */
+  .host-section { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .id-label {
+    font-size: 11px; font-weight: 600; color: #6B7280;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .id-display {
+    background: #FFFFFF; border: 1px solid #E1E4E8;
+    border-radius: 10px; padding: 20px 40px; text-align: center;
+  }
+  .id-number {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 36px; font-weight: bold; color: #1A1A2E; letter-spacing: 4px;
+  }
+  .id-hint { font-size: 11px; color: #9CA3AF; margin-top: 8px; }
+
+  .id-buttons { display: flex; gap: 8px; }
+  .btn {
+    border: 1px solid #E1E4E8; background: transparent;
+    border-radius: 6px; padding: 8px 14px; font-size: 13px;
+    color: #1F2937; cursor: pointer;
+  }
+  .btn:hover { background: #F9FAFB; border-color: #E4342B; }
+
+  .tier-card {
+    background: #FFFFFF; border: 1px solid #E1E4E8;
+    border-radius: 8px; padding: 16px 20px; width: 100%; max-width: 500px;
+  }
+  .tier-label { font-size: 11px; font-weight: 600; color: #6B7280; margin-bottom: 8px; }
+  .tier-badges { display: flex; justify-content: center; gap: 4px; }
+  .tier-badge { border-radius: 4px; padding: 4px 10px; font-size: 11px; }
+  .tier-badge.active { background: #EEF4FF; color: #1A1A2E; }
+  .tier-badge.inactive { background: #F3F4F6; color: #9CA3AF; }
+
+  .request-card {
+    background: #FFFFFF; border: 1px solid #E1E4E8;
+    border-radius: 8px; padding: 16px 20px; width: 100%; max-width: 500px;
+  }
+  .request-header {
+    font-size: 11px; font-weight: 600; color: #6B7280;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .request-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #F6A800; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  .request-info {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 12px;
+  }
+  .request-name { font-size: 14px; font-weight: 600; color: #1F2937; }
+  .request-id { font-family: 'Consolas', monospace; font-size: 12px; color: #6B7280; }
+  .request-perms { display: flex; gap: 6px; margin-bottom: 12px; }
+  .perm-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 3px;
+    border: 1px solid #E1E4E8; color: #6B7280;
+  }
+  .request-actions { display: flex; gap: 8px; }
+  .btn-accept {
+    background: #E4342B; color: white; border: none;
+    border-radius: 6px; padding: 10px 20px; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+  }
+  .btn-reject {
+    background: transparent; color: #6B7280;
+    border: 1px solid #E1E4E8; border-radius: 6px;
+    padding: 10px 20px; font-size: 14px; cursor: pointer;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    background: #FFFFFF; border-top: 1px solid #E1E4E8;
+    padding: 8px 20px; display: flex; justify-content: space-between;
+    align-items: center; flex-shrink: 0;
+  }
+  .footer-text { font-size: 11px; color: #9CA3AF; }
+  .footer-heartbeat { display: flex; align-items: center; gap: 6px; }
+  .footer-dot { width: 8px; height: 8px; border-radius: 50%; background: #9CA3AF; }
+  .footer-hb-text { font-size: 11px; color: #9CA3AF; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">
+      <span class="letter letter-y">Y</span>
+      <span class="letter letter-f">F</span>
+      <span class="letter letter-g">G</span>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">YFG YASTA</span>
+      <span class="brand-sub">REMOTE SUPPORT</span>
+    </div>
+  </div>
+  <div class="status-pill">
+    <div class="status-dot"></div>
+    <span class="status-text">آفلاین</span>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn">فا</button>
+    <button class="lang-btn">EN</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active">این دستگاه</div>
+  <div class="tab">اتصال</div>
+  <div class="tab">بدون نظارت</div>
+  <div class="tab">وضعیت</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="host-section">
+    <div class="id-label">شناسهٔ این دستگاه</div>
+    <div class="id-display">
+      <div class="id-number">123 456 789</div>
+      <div class="id-hint">برای اشتراک، این شناسه را به‌طرف مقابل بدهید</div>
+    </div>
+    <div class="id-buttons">
+      <button class="btn">📋 کپی شناسه</button>
+      <button class="btn">🔄 تمدید</button>
+    </div>
+
+    <div class="tier-card">
+      <div class="tier-label">نوع اتصال</div>
+      <div class="tier-badges">
+        <div class="tier-badge active">شبکهٔ محلی</div>
+        <div class="tier-badge inactive">مستقیم P2P</div>
+        <div class="tier-badge inactive">رله</div>
+      </div>
+    </div>
+
+    <div class="request-card">
+      <div class="request-header">
+        <div class="request-dot"></div>
+        درخواست ورودی در انتظار تأیید
+      </div>
+      <div class="request-info">
+        <span class="request-name">دفتر تهران</span>
+        <span class="request-id">ID: 987 654 321</span>
+      </div>
+      <div class="request-perms">
+        <span class="perm-badge">مشاهده صفحه</span>
+        <span class="perm-badge">کنترل از راه دور</span>
+      </div>
+      <div class="request-actions">
+        <button class="btn-accept">✓ پذیرش</button>
+        <button class="btn-reject">✗ رد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">YFG YASTA v2.0 · protocol 1</span>
+  <div class="footer-heartbeat">
+    <div class="footer-dot"></div>
+    <span class="footer-hb-text">—</span>
+  </div>
+</div>
+
+</body>
+</html>
