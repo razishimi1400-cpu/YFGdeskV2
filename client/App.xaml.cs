@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using YfgDesk.Client.Services;
 using YfgDesk.Client.ViewModels;
@@ -51,6 +52,32 @@ public partial class App : Application
 
         // Try to load an existing identity.
         Identity = await DeviceIdentity.LoadAsync(SecureStorage);
+
+        // If no identity yet (first run), enroll against the embedded server
+        // list with automatic failover. The server that succeeds becomes the
+        // active server; subsequent signaling will try it first, with
+        // failover if it later goes down.
+        if (Identity is null)
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+            try
+            {
+                var (identity, serverUrl) = await DeviceIdentity.EnrollWithFailoverAsync(
+                    Options.GetServerCandidates(),
+                    SecureStorage,
+                    http,
+                    Options.DisplayName);
+                Identity = identity;
+                // Pin the active server to the one that worked.
+                Options.ServerBaseUrl = serverUrl;
+            }
+            catch (Exception ex)
+            {
+                // Enrollment failed on all servers — continue with a placeholder
+                // deviceId; the user will see "—" until network is available.
+                _ = ex;
+            }
+        }
 
         var deviceId = Identity?.DeviceId ?? "—";
         var displayName = Identity?.DisplayName ?? Options.DisplayName;

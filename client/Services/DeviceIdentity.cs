@@ -328,4 +328,78 @@ public sealed class DeviceIdentity : IDisposable
             return base.SendAsync(request, ct);
         }
     }
+
+    /// <summary>
+    /// Try enrolling against each server in <paramref name="serverCandidates"/>
+    /// until one succeeds. Returns the identity + the server that worked.
+    /// Throws an aggregate exception if all servers fail.
+    /// </summary>
+    public static async Task<(DeviceIdentity identity, string serverBaseUrl)> EnrollWithFailoverAsync(
+        IReadOnlyList<string> serverCandidates,
+        ISecureStorage storage,
+        HttpClient http,
+        string displayName,
+        string? filePath = null,
+        Func<long>? clock = null,
+        CancellationToken ct = default)
+    {
+        if (serverCandidates.Count == 0)
+            throw new ArgumentException("No server candidates provided.", nameof(serverCandidates));
+
+        Exception? lastError = null;
+        foreach (var url in serverCandidates)
+        {
+            try
+            {
+                ct.ThrowIfCancellationRequested();
+                var identity = await EnrollAsync(url, storage, http, displayName, filePath, clock, ct);
+                return (identity, url);
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                lastError = ex;
+                // try next server
+            }
+        }
+        throw new InvalidOperationException(
+            $"All {serverCandidates.Count} server candidates failed for enroll.", lastError);
+    }
+
+    /// <summary>
+    /// Try renewing against each server in <paramref name="serverCandidates"/>
+    /// until one succeeds. Returns the server that worked.
+    /// </summary>
+    public async Task<string> RenewBearerWithFailoverAsync(
+        IReadOnlyList<string> serverCandidates,
+        HttpClient http,
+        CancellationToken ct = default)
+    {
+        if (serverCandidates.Count == 0)
+            throw new ArgumentException("No server candidates provided.", nameof(serverCandidates));
+
+        Exception? lastError = null;
+        foreach (var url in serverCandidates)
+        {
+            try
+            {
+                ct.ThrowIfCancellationRequested();
+                await RenewBearerAsync(url, http, ct);
+                return url;
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                lastError = ex;
+            }
+        }
+        throw new InvalidOperationException(
+            $"All {serverCandidates.Count} server candidates failed for renew.", lastError);
+    }
 }

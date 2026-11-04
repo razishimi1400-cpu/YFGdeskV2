@@ -133,6 +133,7 @@ public sealed class SignalingClient : IDisposable
     private async Task RunAsync(CancellationToken ct)
     {
         var backoffSec = _opts.ReconnectInitialBackoffSec;
+        var attemptsOnCurrentServer = 0;
         while (!ct.IsCancellationRequested)
         {
             SetState(SignalingState.Connecting);
@@ -149,6 +150,7 @@ public sealed class SignalingClient : IDisposable
                 _ws = ws;
                 SetState(SignalingState.Online);
                 backoffSec = _opts.ReconnectInitialBackoffSec;
+                attemptsOnCurrentServer = 0;
 
                 // Run receive loop + heartbeat loop in parallel until either dies.
                 using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -166,6 +168,15 @@ public sealed class SignalingClient : IDisposable
             {
                 // Swallow and retry with backoff.
                 _ = ex;
+                attemptsOnCurrentServer++;
+                // After N failures on the current server, advance to the next
+                // server in the failover list.
+                if (attemptsOnCurrentServer >= _opts.ReconnectAttemptsPerServer)
+                {
+                    _opts.AdvanceToNextServer();
+                    attemptsOnCurrentServer = 0;
+                    backoffSec = _opts.ReconnectInitialBackoffSec;
+                }
             }
             finally
             {

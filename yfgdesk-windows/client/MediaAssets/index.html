@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https: wss:; media-src 'self' blob:;"/>
+    <title>YFGDESK WebRTC harness</title>
+    <style>
+        html, body { margin: 0; padding: 0; background: #0a1220; color: #e6eaf0;
+                     font-family: 'Segoe UI', Tahoma, sans-serif; height: 100%; }
+        #video-host { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        #log { position: absolute; bottom: 4px; left: 4px; right: 4px;
+               font-size: 10px; color: #9ba5b5; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <video id="video-host" autoplay playsinline muted></video>
+    <pre id="log"></pre>
+
+    <script>
+        // YFGDESK WebRTC harness — runs inside WebView2.
+        // Bridges C# (via window.chrome.webview.postMessage / .addEventListener)
+        // and the browser's WebRTC + getDisplayMedia implementations.
+        (function () {
+            const log = document.getElementById('log');
+            const video = document.getElementById('video-host');
+            let pc = null;
+            let inputChannel = null;
+            let fileChannel = null;
+            let role = 'viewer';
+            const params = new URLSearchParams(location.search);
+            role = params.get('role') || 'viewer';
+
+            function send(type, payload) {
+                window.chrome.webview.postMessage(JSON.stringify({ type, payload }));
+            }
+            function logLine(s) { log.textContent += '\n' + s; }
+
+            function makePeer() {
+                pc = new RTCPeerConnection({
+                    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+                    bundlePolicy: 'max-bundle',
+                });
+                pc.onicecandidate = (ev) => {
+                    if (ev.candidate) {
+                        send('iceCandidate', {
+                            candidate: ev.candidate.candidate,
+                            sdpMid: ev.candidate.sdpMid,
+                            sdpMLineIndex: ev.candidate.sdpMLineIndex
+                        });
+                    }
+                };
+                pc.ontrack = (ev) => {
+                    logLine('ontrack: kind=' + ev.track.kind);
+                    video.srcObject = ev.streams[0];
+                };
+                pc.ondatachannel = (ev) => {
+                    logLine('ondatachannel: label=' + ev.channel.label);
+                    if (ev.channel.label === 'yfgdesk-input') inputChannel = ev.channel;
+                    if (ev.channel.label === 'yfgdesk-file')  fileChannel  = ev.channel;
+                };
+            }
+
+            window.chrome.webview.addEventListener('message', async (ev) => {
+                let msg;
+                try { msg = JSON.parse(ev.data); } catch { return; }
+                switch (msg.type) {
+                    case 'init':
+                        role = msg.payload.role || 'viewer';
+                        logLine('init role=' + role);
+                        if (!pc) makePeer();
+                        break;
+                    case 'offer':
+                        if (!pc) makePeer();
+                        await pc.setRemoteDescription({ type: 'offer', sdp: msg.payload.sdp });
+                        const ans = await pc.createAnswer();
+                        await pc.setLocalDescription(ans);
+                        send('answer', { sdp: ans.sdp });
+                        break;
+                    case 'answer':
+                        if (!pc) makePeer();
+                        await pc.setRemoteDescription({ type: 'answer', sdp: msg.payload.sdp });
+                        break;
+                    case 'iceCandidate':
+                        if (!pc) makePeer();
+                        try {
+                            await pc.addIceCandidate({
+                                candidate: msg.payload.candidate,
+                                sdpMid: msg.payload.sdpMid,
+                                sdpMLineIndex: msg.payload.sdpMLineIndex
+                            });
+                        } catch (e) { logLine('addIce err: ' + e.message); }
+                        break;
+                    case 'startCapture':
+                        if (role !== 'host') return;
+                        try {
+                            const stream = await navigator.mediaDevices.getDisplayMedia({
+                                video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } },
+                                audio: false,
+                            });
+                            stream.getTracks().forEach((t) => pc.addTrack(t, stream));
+                            const offer = await pc.createOffer();
+                            await pc.setLocalDescription(offer);
+                            send('offer', { sdp: offer.sdp });
+                        } catch (e) { logLine('capture err: ' + e.message); }
+                        break;
+                    case 'close':
+                        try { pc && pc.close(); } catch {}
+                        pc = null;
+                        break;
+                    default:
+                        logLine('unknown msg: ' + msg.type);
+                }
+            });
+
+            // Announce readiness.
+            send('harnessReady', { role });
+            logLine('YFGDESK harness ready role=' + role);
+        })();
+    </script>
+</body>
+</html>
