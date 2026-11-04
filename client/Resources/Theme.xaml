@@ -5,19 +5,28 @@
     <!-- WPF built-in boolean-to-visibility converter, registered globally. -->
     <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
 
-    <!-- YFG YASTA brand palette: vibrant green/orange/red + navy
-         Inspired by the brand logo (swoosh + Y/F/G letters + navy YASTA wordmark).
-         The base UI is white like AnyDesk, with the brand colors as accents. -->
+    <!-- YFG YASTA brand palette — extracted from the official logo
+         Logo composition (verified from the brand PNG):
+           - "YFG" letters: Y=red, F=orange-yellow, G=blue (with red notch)
+           - Green swoosh arc over the G + a yellow accent strip
+           - "YASTA" wordmark: dark navy
+           - "QUALITY WE KNOW!!" tagline: dark navy
+         Primary accent: RED (the Y letter — most prominent brand color).
+         The base UI stays clean white like AnyDesk, with brand colors as
+         accents on buttons, status indicators, and the top bar. -->
 
-    <!-- Brand primary colors (matching logo letters) -->
-    <Color x:Key="BrandGreen">#3DA639</Color>
-    <Color x:Key="BrandGreenLight">#8DC63F</Color>
-    <Color x:Key="BrandOrange">#F7941D</Color>
-    <Color x:Key="BrandOrangeLight">#FDB913</Color>
-    <Color x:Key="BrandRed">#ED1C24</Color>
-    <Color x:Key="BrandRedDark">#C1272D</Color>
-    <Color x:Key="BrandNavy">#1B3F8F</Color>
-    <Color x:Key="BrandNavyDark">#14264D</Color>
+    <!-- Brand primary colors (matching logo letters exactly) -->
+    <Color x:Key="BrandRed">#E4342B</Color>
+    <Color x:Key="BrandRedDark">#C41E15</Color>
+    <Color x:Key="BrandOrange">#F6A800</Color>
+    <Color x:Key="BrandYellow">#FFC20E</Color>
+    <Color x:Key="BrandYellowLight">#F9B000</Color>
+    <Color x:Key="BrandBlue">#1D71C8</Color>
+    <Color x:Key="BrandBlueDark">#0F6DB5</Color>
+    <Color x:Key="BrandGreen">#00953B</Color>
+    <Color x:Key="BrandGreenDark">#007A2F</Color>
+    <Color x:Key="BrandNavy">#1A1A2E</Color>
+    <Color x:Key="BrandNavyDark">#141424</Color>
 
     <!-- UI surface colors (AnyDesk-like clean white/grey) -->
     <Color x:Key="WindowBackground">#F4F5F7</Color>
@@ -37,11 +46,16 @@
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="BrandGreenBrush" Color="{StaticResource BrandGreen}"/>
-    <SolidColorBrush x:Key="BrandGreenLightBrush" Color="{StaticResource BrandGreenLight}"/>
+    <SolidColorBrush x:Key="BrandGreenLightBrush" Color="#1FB050"/>
     <SolidColorBrush x:Key="BrandOrangeBrush" Color="{StaticResource BrandOrange}"/>
-    <SolidColorBrush x:Key="BrandOrangeLightBrush" Color="{StaticResource BrandOrangeLight}"/>
+    <SolidColorBrush x:Key="BrandOrangeLightBrush" Color="{StaticResource BrandYellow}"/>
+    <SolidColorBrush x:Key="BrandYellowBrush" Color="{StaticResource BrandYellow}"/>
+    <SolidColorBrush x:Key="BrandYellowLightBrush" Color="{StaticResource BrandYellowLight}"/>
     <SolidColorBrush x:Key="BrandRedBrush" Color="{StaticResource BrandRed}"/>
     <SolidColorBrush x:Key="BrandRedDarkBrush" Color="{StaticResource BrandRedDark}"/>
+    <SolidColorBrush x:Key="BrandRedLightBrush" Color="#FF5048"/>
+    <SolidColorBrush x:Key="BrandBlueBrush" Color="{StaticResource BrandBlue}"/>
+    <SolidColorBrush x:Key="BrandBlueDarkBrush" Color="{StaticResource BrandBlueDark}"/>
     <SolidColorBrush x:Key="BrandNavyBrush" Color="{StaticResource BrandNavy}"/>
     <SolidColorBrush x:Key="BrandNavyDarkBrush" Color="{StaticResource BrandNavyDark}"/>
 
@@ -58,23 +72,24 @@
     <SolidColorBrush x:Key="StatusConnectingBrush" Color="{StaticResource StatusConnecting}"/>
     <SolidColorBrush x:Key="StatusErrorBrush" Color="{StaticResource StatusError}"/>
 
-    <!-- Logo Y-F-G gradient brushes -->
+    <!-- Logo Y-F-G gradient brushes — exact colors from the brand PNG:
+         Y=red, F=orange/yellow, G=blue, swoosh=green -->
     <LinearGradientBrush x:Key="LogoYBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#8DC63F" Offset="0"/>
-        <GradientStop Color="#3DA639" Offset="1"/>
+        <GradientStop Color="#E4342B" Offset="0"/>
+        <GradientStop Color="#C41E15" Offset="1"/>
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="LogoFBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FDB913" Offset="0"/>
-        <GradientStop Color="#F7941D" Offset="1"/>
+        <GradientStop Color="#FFC20E" Offset="0"/>
+        <GradientStop Color="#F6A800" Offset="1"/>
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="LogoGBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#ED1C24" Offset="0"/>
-        <GradientStop Color="#C1272D" Offset="1"/>
+        <GradientStop Color="#1D71C8" Offset="0"/>
+        <GradientStop Color="#0F6DB5" Offset="1"/>
     </LinearGradientBrush>
 
-    <!-- Primary button: brand green -->
+    <!-- Primary button: brand RED (the Y color — most prominent brand accent) -->
     <Style x:Key="PrimaryButton" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource BrandGreenBrush}"/>
+        <Setter Property="Background" Value="{StaticResource BrandRedBrush}"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="FontSize" Value="14"/>
@@ -92,7 +107,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BrandGreenLightBrush}"/>
+                <Setter Property="Background" Value="{StaticResource BrandRedLightBrush}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="#D1D5DB"/>
@@ -146,7 +161,7 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#F9FAFB"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrandRedBrush}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="#9CA3AF"/>
@@ -166,7 +181,7 @@
         <Setter Property="FontFamily" Value="'Segoe UI', Tahoma"/>
         <Style.Triggers>
             <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrandRedBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -226,9 +241,9 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource BrandGreenBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource BrandRedBrush}"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource BrandRedBrush}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource BrandNavyBrush}"/>
