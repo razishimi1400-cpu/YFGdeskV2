@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  YFG YASTA v2 — WiX v5 MSI package definition.
+
+  This produces YFGdesk-Setup.msi — a real Windows installer with:
+    - Per-machine install into Program Files\YFG SYSTEMS\YFG YASTA
+    - Start Menu + Desktop shortcuts
+    - File type association (none yet)
+    - Add/Remove Programs entry with uninstaller
+    - Per-user application data preserved on upgrade
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="YFG YASTA"
+    Language="1065"
+    Codepage="1256"
+    Manufacturer="YFG SYSTEMS"
+    Version="2.0.0.0"
+    UpgradeCode="8F4A3B2C-7E5D-4F1A-9C8B-3A6D5E4F7B2C">
+
+    <SummaryInformation
+      Description="YFG YASTA Remote Desktop Support v2.0"
+      Manufacturer="YFG SYSTEMS"
+      Codepage="1256"
+      Keywords="YFG,YASTA,Remote,Desktop,Installer" />
+
+    <!-- Upgrade: a newer build replaces older ones (per-machine) -->
+    <MajorUpgrade
+      DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"
+      Schedule="afterInstallValidate" />
+
+    <Media Id="1" Cabinet="YFGdesk.cab" EmbedCab="yes" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_FeatureTree" />
+    <Property Id="ARPPRODUCTICON" Value="YFGdesk.exe" />
+    <Property Id="ARPCONTACT" Value="YFG SYSTEMS" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/razishimi1400-cpu/YFGdeskV2" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/razishimi1400-cpu/YFGdeskV2" />
+    <Property Id="ARPNOREPAIR" Value="yes" />
+    <Property Id="ARPNOMODIFY" Value="yes" />
+
+    <!-- Top-level feature tree -->
+    <Feature Id="CompleteFeature" Title="YFG YASTA" Level="1"
+             Description="Complete installation of YFG YASTA remote desktop.">
+      <ComponentGroupRef Id="HarvestedClientFiles" />
+      <ComponentRef Id="ShortcutStartMenu" />
+      <ComponentRef Id="ShortcutDesktop" />
+      <ComponentRef Id="RegistryUninstallInfo" />
+    </Feature>
+
+    <!-- Install conditions: must be Windows 10 x64 or later -->
+    <Launch Condition="Privileged" Message="!(loc.NeedAdmin)" />
+    <Launch Condition="VersionNT64" Message="!(loc.Need64Bit)" />
+  </Package>
+
+  <!-- Folders -->
+  <Fragment Id="Folders">
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="YfgSystemFolder" Name="YFGSYSTEMS">
+        <Directory Id="INSTALLFOLDER" Name="YFGYasta" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="YfgProgramMenuFolder" Name="YFGYasta" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="DesktopFolder" />
+  </Fragment>
+
+  <!-- Shortcuts -->
+  <Fragment Id="Shortcuts">
+    <DirectoryRef Id="YfgProgramMenuFolder">
+      <Component Id="ShortcutStartMenu" Guid="{A1B2C3D4-1111-2222-3333-444455556666}">
+        <Shortcut Id="StartMenuShortcut"
+                  Name="YFG YASTA"
+                  Description="YFG YASTA Remote Desktop Support"
+                  Target="[INSTALLFOLDER]YfgDesk.Client.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="YfgDeskIcon" />
+        <RemoveFolder Id="RemoveYfgProgramMenuFolder" On="uninstall" />
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFG SYSTEMS\YFG YASTA"
+                       Name="StartMenuShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="ShortcutDesktop" Guid="{A1B2C3D4-7777-8888-9999-AAAABBBBCCCC}">
+        <Shortcut Id="DesktopShortcut"
+                  Name="YFG YASTA"
+                  Description="YFG YASTA Remote Desktop Support"
+                  Target="[INSTALLFOLDER]YfgDesk.Client.exe"
+                  WorkingDirectory="INSTALLFOLDER"
+                  Icon="YfgDeskIcon" />
+        <RemoveFolder Id="RemoveDesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFG SYSTEMS\YFG YASTA"
+                       Name="DesktopShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="RegistryUninstallInfo" Guid="{A1B2C3D4-DDDD-EEEE-FFFF-001122334455}">
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFG SYSTEMS\YFG YASTA"
+                       Name="InstallPath"
+                       Type="string"
+                       Value="[INSTALLFOLDER]"
+                       KeyPath="yes" />
+        <RegistryValue Root="HKLM"
+                       Key="SOFTWARE\YFG SYSTEMS\YFG YASTA"
+                       Name="Version"
+                       Type="string"
+                       Value="2.0.0.0" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <!-- Icon -->
+  <Fragment Id="Icons">
+    <Icon Id="YfgDeskIcon" SourceFile="Assets\yfgdesk-mark.ico" />
+  </Fragment>
+
+  <!-- Custom action: kill any running instance before install -->
+  <Fragment Id="KillRunning">
+    <CustomAction Id="KillRunningYfgDesk"
+                  Directory="INSTALLFOLDER"
+                  Execute="immediate"
+                  Return="ignore"
+                  ExeCommand="[SystemFolder]taskkill.exe /im YfgDesk.Client.exe /f /t" />
+    <InstallExecuteSequence>
+      <Custom Action="KillRunningYfgDesk" Before="InstallValidate" />
+    </InstallExecuteSequence>
+  </Fragment>
+</Wix>

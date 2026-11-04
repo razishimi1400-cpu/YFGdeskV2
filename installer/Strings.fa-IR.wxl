@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  YFG YASTA v2 — Persian (Farsi) localization strings for the MSI installer.
+  Codepage 1256 (Arabic) is used so Persian text renders correctly in the
+  installer UI on Windows.
+-->
+<WixLocalization xmlns="http://wixtoolset.org/schemas/v4/wxl" Culture="fa-IR" Codepage="1256">
+
+  <String Id="DowngradeErrorMessage" Value="نسخهٔ جدیدتری از YFG YASTA از قبل نصب شده است." />
+
+  <String Id="NeedAdmin" Value="برای نصب YFG YASTA نیاز به دسترسی مدیر (Administrator) دارید." />
+  <String Id="Need64Bit" Value="YFG YASTA فقط روی ویندوز ۶۴-بیت اجرا می‌شود." />
+
+  <!-- WiX UI defaults (overridden) -->
+  <String Id="WelcomeDlgTitle" Value="{\WixUI_Font_Bigger}نصب YFG YASTA" />
+  <String Id="WelcomeDlgDescription" Value="جادوگر نصب YFG YASTA روی این کامپیوتر نصب خواهد شد. روی «بعدی» کلیک کنید." />
+
+  <String Id="InstallDirDlgTitle" Value="{\WixUI_Font_Bigger}پوشهٔ نصب" />
+  <String Id="InstallDirDlgDescription" Value="پوشه‌ای که YFG YASTA در آن نصب می‌شود را انتخاب کنید." />
+
+  <String Id="ProgressDlgTitleInstalling" Value="{\WixUI_Font_Bigger}در حال نصب YFG YASTA" />
+  <String Id="ProgressDlgTextInstalling" Value="لطفاً صبر کنید تا YFG YASTA نصب شود." />
+
+  <String Id="ExitDialogTitle" Value="{\WixUI_Font_Bigger}نصب تکمیل شد" />
+  <String Id="ExitDialogDescription" Value="YFG YASTA با موفقیت روی کامپیوتر شما نصب شد." />
+
+  <String Id="VerifyReadyDlgInstallTitle" Value="{\WixUI_Font_Bigger}آمادهٔ نصب" />
+  <String Id="VerifyReadyDlgInstallText" Value="برای شروع نصب روی «نصب» کلیک کنید." />
+
+  <String Id="MaintenanceTypeDlgRepairTitle" Value="{\WixUI_Font_Bigger}تعمیر نصب" />
+  <String Id="MaintenanceTypeDlgRemoveTitle" Value="{\WixUI_Font_Bigger}حذف YFG YASTA" />
+
+</WixLocalization>

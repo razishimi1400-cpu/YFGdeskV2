@@ -1,0 +1,25 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Platform>x64</Platform>
+    <ProductVersion>2.0.0</ProductVersion>
+    <OutputName>YFGdesk-Server-Setup</OutputName>
+    <Cabinet>YFGdeskServer.cab</Cabinet>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ServerPackage.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <HarvestDirectory Include="$(MSBuildThisFileDirectory)..\publish\server-single">
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <ComponentGroupName>HarvestedServerFiles</ComponentGroupName>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+    </HarvestDirectory>
+  </ItemGroup>
+
+</Project>

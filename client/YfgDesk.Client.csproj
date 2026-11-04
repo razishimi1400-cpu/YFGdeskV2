@@ -111,6 +111,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Assets\yfgdesk-mark.svg" />
+    <Content Include="Assets\yfgdesk-mark.ico" />
   </ItemGroup>
 
 </Project>
