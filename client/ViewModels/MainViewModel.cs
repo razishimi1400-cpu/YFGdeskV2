@@ -82,6 +82,7 @@ public sealed class MainViewModel : ObservableObject
             if (SetProperty(ref _signalingState, value))
             {
                 IsOnline = value == SignalingClient.SignalingState.Online;
+                RaisePropertyChanged(nameof(ConnectionStateLabel));
             }
         }
     }
@@ -92,7 +93,25 @@ public sealed class MainViewModel : ObservableObject
         set => SetProperty(ref _selectedTab, value);
     }
 
-    public string ProtocolVersionLabel => $"YFGDESK v2.0 · protocol {ProtocolVersion.Current}";
+    public string ProtocolVersionLabel => $"YFG YASTA v2.0 · protocol {ProtocolVersion.Current}";
+
+    /// <summary>
+    /// Localized connection-state label for the top-bar pill.
+    /// </summary>
+    public string ConnectionStateLabel
+    {
+        get
+        {
+            return SignalingState switch
+            {
+                SignalingClient.SignalingState.Online => "آنلاین",
+                SignalingClient.SignalingState.Connecting => "در حال اتصال...",
+                SignalingClient.SignalingState.Backoff => "در حال تلاش مجدد...",
+                SignalingClient.SignalingState.Closed => "آفلاین",
+                _ => "آفلاین",
+            };
+        }
+    }
 
     /// <summary>
     /// Set the device ID after a successful enrollment. Also pushes it to
@@ -102,5 +121,23 @@ public sealed class MainViewModel : ObservableObject
     {
         DeviceId = deviceId;
         Host.DeviceId = deviceId;
+    }
+
+    /// <summary>
+    /// Force a refresh of the displayed device ID from the loaded identity.
+    /// Called after RenewBearerWithFailoverAsync succeeds.
+    /// </summary>
+    public void RefreshDeviceId()
+    {
+        // On WPF, App.Identity holds the loaded identity. On net10.0 (tests),
+        // App is not available; the caller is responsible for pushing the
+        // device id via SetDeviceId instead.
+#if WINDOWS
+        var id = App.Identity?.DeviceId;
+        if (!string.IsNullOrEmpty(id))
+        {
+            SetDeviceId(id);
+        }
+#endif
     }
 }

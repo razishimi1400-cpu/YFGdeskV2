@@ -36,6 +36,7 @@
     <UseWindowsForms>false</UseWindowsForms>
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <!--
       Allow restoring the Windows TFM on Linux. Restore only downloads packages;
       it never invokes the Windows reference assemblies. This lets `dotnet build

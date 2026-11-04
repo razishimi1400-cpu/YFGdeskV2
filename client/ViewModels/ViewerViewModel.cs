@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using YfgDesk.Client.Services;
 using YfgDesk.Shared.Crypto;
 using YfgDesk.Shared.Protocol;
@@ -20,8 +21,11 @@ public sealed class ViewerViewModel : ObservableObject
     private string _statusText = string.Empty;
     private bool _requestEnabled;
 
-    /// <summary>User-typed target device ID (9 digits). May include spaces.</summary>
-    public string TargetIdInput
+    /// <summary>
+    /// Bound to the big AnyDesk-style input box. May contain spaces or
+    /// Persian digits — both are stripped before validation.
+    /// </summary>
+    public string TargetId
     {
         get => _targetIdInput;
         set
@@ -29,10 +33,17 @@ public sealed class ViewerViewModel : ObservableObject
             if (SetProperty(ref _targetIdInput, value))
             {
                 TargetIdError = string.Empty;
-                var stripped = (value ?? string.Empty).Replace(" ", "").Trim();
+                var stripped = SanitizeId(value);
                 RequestEnabled = Validators.IsValidDeviceId(stripped);
             }
         }
+    }
+
+    /// <summary>Kept for backward compatibility — same as <see cref="TargetId"/>.</summary>
+    public string TargetIdInput
+    {
+        get => _targetIdInput;
+        set => TargetId = value;
     }
 
     public string TargetIdError
@@ -104,8 +115,35 @@ public sealed class ViewerViewModel : ObservableObject
         set => SetProperty(ref _statusText, value);
     }
 
+    /// <summary>
+    /// Connect command — bound from the big "اتصال" button. The actual
+    /// orchestration lives in <see cref="App.Orchestrator"/>; the command
+    /// just kicks it off if the target ID is valid.
+    /// </summary>
+    public ICommand? ConnectCommand { get; set; }
+
+    /// <summary>Strip spaces + Persian digits → Latin digits.</summary>
+    private static string SanitizeId(string? input)
+    {
+        if (string.IsNullOrEmpty(input)) return string.Empty;
+        // Map Persian/Arabic digits to Latin
+        var sb = new System.Text.StringBuilder(input.Length);
+        foreach (var c in input)
+        {
+            if (c >= '\u06F0' && c <= '\u06F9') // Persian digits
+                sb.Append((char)('0' + (c - '\u06F0')));
+            else if (c >= '\u0660' && c <= '\u0669') // Arabic-Indic digits
+                sb.Append((char)('0' + (c - '\u0660')));
+            else if (c == ' ' || c == '\u00A0') // skip spaces
+                continue;
+            else
+                sb.Append(c);
+        }
+        return sb.ToString();
+    }
+
     /// <summary>Strip spaces from the user input and return the clean 9-digit id.</summary>
-    public string GetSanitizedTargetId() => (TargetIdInput ?? string.Empty).Replace(" ", "").Trim();
+    public string GetSanitizedTargetId() => SanitizeId(TargetIdInput);
 
     /// <summary>Return the requested permissions as a bitmask.</summary>
     public int GetRequestedPermissions() => _requestedPermissions;

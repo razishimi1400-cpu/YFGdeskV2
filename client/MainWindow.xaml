@@ -3,11 +3,47 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:YfgDesk.Client.Views"
         xmlns:vm="clr-namespace:YfgDesk.Client.ViewModels"
-        Title="YFGDESK — پشتیبانی از راه دور"
-        Height="720" Width="1100"
-        Background="{StaticResource BrandNavyBrush}"
+        Title="YFG YASTA — پشتیبانی از راه دور"
+        Height="640" Width="920"
+        Background="{StaticResource WindowBackgroundBrush}"
         FlowDirection="RightToLeft"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        MinHeight="560" MinWidth="720">
+
+    <Window.Resources>
+        <!-- The brand mark as a XAML drawing (Y F G with swoosh) -->
+        <DrawingBrush x:Key="BrandMarkBrush" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <!-- Swoosh: green crescent arc -->
+                    <GeometryDrawing Brush="{StaticResource LogoYBrush}">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M 8,2 Q 22,2 28,8 Q 24,4 16,4 Q 12,4 10,5 Z"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <!-- Y (green) -->
+                    <GeometryDrawing Brush="{StaticResource LogoYBrush}">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M 6,4 L 10,4 L 14,10 L 18,4 L 22,4 L 16,14 L 16,22 L 12,22 L 12,14 Z"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <!-- F (orange) -->
+                    <GeometryDrawing Brush="{StaticResource LogoFBrush}">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M 24,4 L 36,4 L 36,8 L 28,8 L 28,11 L 34,11 L 34,15 L 28,15 L 28,22 L 24,22 Z"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <!-- G (red) -->
+                    <GeometryDrawing Brush="{StaticResource LogoGBrush}">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="M 50,4 Q 42,4 42,13 Q 42,22 50,22 L 56,22 L 56,15 L 50,15 L 50,11 L 60,11 L 60,22 Q 60,22 50,22 Q 38,22 38,13 Q 38,4 50,4 Z"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,67 +51,200 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Top bar: brand + device id + lang toggle -->
-        <Border Grid.Row="0" Background="{StaticResource BrandNavyLightBrush}" Padding="16,10">
+        <!-- ============================== TOP BAR ============================== -->
+        <Border Grid.Row="0" Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource PanelBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="20,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+
+                <!-- Brand mark: rectangle with Y-F-G drawing + YASTA wordmark -->
                 <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
-                    <Image Source="/Assets/yfgdesk-mark.svg" Width="28" Height="28" Margin="0,0,12,0"/>
-                    <TextBlock Text="YFGDESK" FontSize="18" FontWeight="Bold"
-                               Foreground="{StaticResource BrandTealBrush}" VerticalAlignment="Center"/>
+                    <Border Width="56" Height="32" Margin="0,0,10,0">
+                        <Rectangle Fill="{StaticResource BrandMarkBrush}"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="YFG YASTA" FontSize="16" FontWeight="Bold"
+                                   Foreground="{StaticResource BrandNavyBrush}"/>
+                        <TextBlock Text="REMOTE SUPPORT" FontSize="9"
+                                   Foreground="{StaticResource ForegroundFaintBrush}"/>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="شناسهٔ دستگاه:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="{Binding DeviceId}" FontWeight="SemiBold"
-                               FontFamily="Consolas" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="کپی" Padding="8,2" Click="OnCopyDeviceId"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Button Style="{StaticResource SecondaryButton}" Content="FA" Padding="10,2" Click="OnToggleLang" Tag="fa"/>
-                    <Button Style="{StaticResource SecondaryButton}" Content="EN" Padding="10,2" Margin="6,0,0,0" Click="OnToggleLang" Tag="en"/>
+
+                <!-- Center: connection status pill -->
+                <Border Grid.Column="2" Background="{StaticResource AccentBackgroundBrush}"
+                        CornerRadius="12" Padding="14,4" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center"
+                                 Fill="{StaticResource StatusOfflineBrush}"/>
+                        <TextBlock Text="{Binding ConnectionStateLabel}" FontSize="12"
+                                   Foreground="{StaticResource ForegroundDimBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Language toggle -->
+                <StackPanel Orientation="Horizontal" Grid.Column="3">
+                    <Button Style="{StaticResource SecondaryButton}" Content="فا" Padding="10,4"
+                            Click="OnToggleLang" Tag="fa"/>
+                    <Button Style="{StaticResource SecondaryButton}" Content="EN" Padding="10,4"
+                            Margin="6,0,0,0" Click="OnToggleLang" Tag="en"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Tab control: Host + Connect -->
-        <TabControl Grid.Row="1" Background="{StaticResource BrandNavyBrush}" BorderThickness="0"
+        <!-- ============================== MAIN CONTENT ============================== -->
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0"
                     SelectedIndex="{Binding SelectedTab}"
-                    Padding="0">
-            <TabItem Header="میزبان" FontSize="14" Padding="20,8">
-                <views:HostView DataContext="{Binding Host}"/>
+                    Padding="20,12,20,8">
+
+            <!-- Tab: این دستگاه (This Desk — Host mode) -->
+            <TabItem Header="این دستگاه" Padding="20,10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,16,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Your ID — AnyDesk-style hero section -->
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+                            <TextBlock Text="شناسهٔ این دستگاه" Style="{StaticResource HeaderLabel}"
+                                       HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <Border Background="{StaticResource PanelBackgroundBrush}"
+                                    BorderBrush="{StaticResource PanelBorderBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="40,20">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeviceId, TargetNullValue='— — —'}"
+                                               Style="{StaticResource IdDisplayBox}"/>
+                                    <TextBlock Text="برای اشتراک، این شناسه را به对方 بدهید"
+                                               FontSize="11"
+                                               Foreground="{StaticResource ForegroundFaintBrush}"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,8,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                                <Button Style="{StaticResource SecondaryButton}" Content="📋 کپی شناسه"
+                                        Padding="14,8" Click="OnCopyDeviceId"/>
+                                <Button Style="{StaticResource SecondaryButton}" Content="🔄 تمدید"
+                                        Padding="14,8" Margin="8,0,0,0" Click="OnRenewId"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Connection tier indicator -->
+                        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,24,0,0"
+                                HorizontalAlignment="Center" MaxWidth="500">
+                            <StackPanel>
+                                <TextBlock Text="نوع اتصال" Style="{StaticResource HeaderLabel}" Margin="0,0,0,8"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Border CornerRadius="4" Padding="10,4" Margin="4"
+                                            Background="{StaticResource AccentBackgroundBrush}">
+                                        <TextBlock Text="شبکهٔ محلی" FontSize="11"
+                                                   Foreground="{StaticResource BrandNavyBrush}"/>
+                                    </Border>
+                                    <Border CornerRadius="4" Padding="10,4" Margin="4"
+                                            Background="#F3F4F6">
+                                        <TextBlock Text="مستقیم P2P" FontSize="11"
+                                                   Foreground="{StaticResource ForegroundFaintBrush}"/>
+                                    </Border>
+                                    <Border CornerRadius="4" Padding="10,4" Margin="4"
+                                            Background="#F3F4F6">
+                                        <TextBlock Text="رله" FontSize="11"
+                                                   Foreground="{StaticResource ForegroundFaintBrush}"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Host view (incoming requests, capture button, etc.) -->
+                        <views:HostView Grid.Row="2" DataContext="{Binding Host}" Margin="0,20,0,0"/>
+
+                        <!-- Spacer -->
+                        <TextBlock Grid.Row="3"/>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
-            <TabItem Header="اتصال" FontSize="14" Padding="20,8">
-                <views:ViewerView DataContext="{Binding Viewer}"/>
+
+            <!-- Tab: اتصال (Connect — Viewer mode) -->
+            <TabItem Header="اتصال" Padding="20,10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,16,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Connect to ID — AnyDesk-style hero input -->
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Center" MaxWidth="500" Margin="0,12">
+                            <TextBlock Text="شناسهٔ دستگاه مقصد را وارد کنید"
+                                       Style="{StaticResource HeaderLabel}"
+                                       HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBox x:Name="TargetIdInput" FontSize="28"
+                                     FontFamily="Consolas, 'Courier New'"
+                                     HorizontalContentAlignment="Center"
+                                     Padding="16,12"
+                                     MaxLength="11"
+                                     Text="{Binding Viewer.TargetId, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Style="{StaticResource PrimaryButton}" Content="🔗 اتصال"
+                                    Padding="20,14" Margin="0,16,0,0"
+                                    HorizontalAlignment="Center"
+                                    Click="OnConnect"/>
+                            <TextBlock Text="مثال: ۱۲۳ ۴۵۶ ۷۸۹"
+                                       FontSize="11"
+                                       Foreground="{StaticResource ForegroundFaintBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+
+                        <!-- Viewer view (permissions, video, file transfer) -->
+                        <views:ViewerView Grid.Row="1" DataContext="{Binding Viewer}" Margin="0,16,0,0"/>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
-            <TabItem Header="بدون نظارت" FontSize="14" Padding="20,8">
-                <views:UnattendedView DataContext="{Binding Unattended}"/>
+
+            <!-- Tab: بدون نظارت -->
+            <TabItem Header="بدون نظارت" Padding="20,10">
+                <views:UnattendedView DataContext="{Binding Unattended}" Margin="0,16,0,0"/>
             </TabItem>
-            <TabItem Header="وضعیت" FontSize="14" Padding="20,8">
-                <views:StatusView DataContext="{Binding Status}"/>
+
+            <!-- Tab: وضعیت -->
+            <TabItem Header="وضعیت" Padding="20,10">
+                <views:StatusView DataContext="{Binding Status}" Margin="0,16,0,0"/>
             </TabItem>
         </TabControl>
 
-        <!-- Sticky footer: protocol version + heartbeat -->
-        <Border Grid.Row="2" Background="{StaticResource BrandNavyLightBrush}" Padding="16,6">
+        <!-- ============================== FOOTER ============================== -->
+        <Border Grid.Row="2" Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource PanelBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="20,8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+
                 <TextBlock Grid.Column="0" Text="{Binding ProtocolVersionLabel}"
-                           Foreground="{StaticResource ForegroundDimBrush}" FontSize="11"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center">
+                           Foreground="{StaticResource ForegroundFaintBrush}" FontSize="11"
+                           VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Margin="0,0,6,0">
                         <Ellipse.Fill>
-                            <SolidColorBrush x:Name="HeartbeatDot" Color="{StaticResource BrandWarn}"/>
+                            <SolidColorBrush x:Name="HeartbeatDot" Color="{StaticResource StatusOffline}"/>
                         </Ellipse.Fill>
                     </Ellipse>
                     <TextBlock x:Name="HeartbeatLabel" Text="—"
-                               Foreground="{StaticResource ForegroundDimBrush}" FontSize="11"/>
+                               Foreground="{StaticResource ForegroundFaintBrush}" FontSize="11"
+                               VerticalAlignment="Center"/>
                 </StackPanel>
             </Grid>
         </Border>

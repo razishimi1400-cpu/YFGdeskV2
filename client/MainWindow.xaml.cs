@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using YfgDesk.Client.ViewModels;
 
 namespace YfgDesk.Client;
@@ -24,8 +25,40 @@ public partial class MainWindow : Window
     /// <summary>Copy the device ID to the clipboard.</summary>
     private void OnCopyDeviceId(object sender, RoutedEventArgs e)
     {
-        try { Clipboard.SetText((DataContext as MainViewModel)?.DeviceId ?? string.Empty); }
+        try
+        {
+            var id = (DataContext as MainViewModel)?.DeviceId ?? string.Empty;
+            if (!string.IsNullOrEmpty(id))
+                Clipboard.SetText(id);
+        }
         catch { /* best-effort — clipboard may be locked */ }
+    }
+
+    /// <summary>Renew the device ID with the server (calls POST /api/hosts/renew).</summary>
+    private void OnRenewId(object sender, RoutedEventArgs e)
+    {
+        // TODO: call App.Identity.RenewBearerWithFailoverAsync(...) and refresh the
+        // displayed DeviceId. For now we just refresh the binding.
+        try
+        {
+            var vm = DataContext as MainViewModel;
+            vm?.RefreshDeviceId();
+        }
+        catch { /* best-effort */ }
+    }
+
+    /// <summary>Connect to the target ID entered in the input box.</summary>
+    private void OnConnect(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var vm = (DataContext as MainViewModel)?.Viewer;
+            if (vm is null) return;
+            // The ViewerViewModel.TargetId is already bound to the TextBox.
+            // Trigger the connect command (if wired in the VM).
+            vm.ConnectCommand?.Execute(null);
+        }
+        catch { /* best-effort */ }
     }
 
     /// <summary>Toggle FA/EN language. The XAML is bound bidirectionally so
@@ -38,8 +71,8 @@ public partial class MainWindow : Window
             // Reload flow direction + title.
             FlowDirection = lang == "fa" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
             Title = lang == "fa"
-                ? "YFGDESK — پشتیبانی از راه دور"
-                : "YFGDESK — Remote Support";
+                ? "YFG YASTA — پشتیبانی از راه دور"
+                : "YFG YASTA — Remote Support";
         }
     }
 }

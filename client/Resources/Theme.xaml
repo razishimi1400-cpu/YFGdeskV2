@@ -5,41 +5,86 @@
     <!-- WPF built-in boolean-to-visibility converter, registered globally. -->
     <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
 
-    <!-- YFGDESK brand palette: dark navy + teal accent -->
-    <Color x:Key="BrandNavy">#0A1220</Color>
-    <Color x:Key="BrandNavyLight">#141E33</Color>
-    <Color x:Key="BrandTeal">#2CE2CA</Color>
-    <Color x:Key="BrandTealDark">#1FAE9C</Color>
-    <Color x:Key="BrandError">#FF5C5C</Color>
-    <Color x:Key="BrandWarn">#FFB454</Color>
-    <Color x:Key="BrandOk">#7DE08B</Color>
-    <Color x:Key="Foreground">#E6EAF0</Color>
-    <Color x:Key="ForegroundDim">#9BA5B5</Color>
-    <Color x:Key="BackgroundPanel">#0F1828</Color>
+    <!-- YFG YASTA brand palette: vibrant green/orange/red + navy
+         Inspired by the brand logo (swoosh + Y/F/G letters + navy YASTA wordmark).
+         The base UI is white like AnyDesk, with the brand colors as accents. -->
 
-    <SolidColorBrush x:Key="BrandNavyBrush"  Color="{StaticResource BrandNavy}"/>
-    <SolidColorBrush x:Key="BrandNavyLightBrush" Color="{StaticResource BrandNavyLight}"/>
-    <SolidColorBrush x:Key="BrandTealBrush"  Color="{StaticResource BrandTeal}"/>
-    <SolidColorBrush x:Key="BrandTealDarkBrush" Color="{StaticResource BrandTealDark}"/>
-    <SolidColorBrush x:Key="BrandErrorBrush" Color="{StaticResource BrandError}"/>
-    <SolidColorBrush x:Key="BrandWarnBrush"  Color="{StaticResource BrandWarn}"/>
-    <SolidColorBrush x:Key="BrandOkBrush"   Color="{StaticResource BrandOk}"/>
+    <!-- Brand primary colors (matching logo letters) -->
+    <Color x:Key="BrandGreen">#3DA639</Color>
+    <Color x:Key="BrandGreenLight">#8DC63F</Color>
+    <Color x:Key="BrandOrange">#F7941D</Color>
+    <Color x:Key="BrandOrangeLight">#FDB913</Color>
+    <Color x:Key="BrandRed">#ED1C24</Color>
+    <Color x:Key="BrandRedDark">#C1272D</Color>
+    <Color x:Key="BrandNavy">#1B3F8F</Color>
+    <Color x:Key="BrandNavyDark">#14264D</Color>
+
+    <!-- UI surface colors (AnyDesk-like clean white/grey) -->
+    <Color x:Key="WindowBackground">#F4F5F7</Color>
+    <Color x:Key="PanelBackground">#FFFFFF</Color>
+    <Color x:Key="PanelBorder">#E1E4E8</Color>
+    <Color x:Key="Foreground">#1F2937</Color>
+    <Color x:Key="ForegroundDim">#6B7280</Color>
+    <Color x:Key="ForegroundFaint">#9CA3AF</Color>
+    <Color x:Key="AccentBackground">#EEF4FF</Color>
+    <Color x:Key="AccentBorder">#3DA639</Color>
+
+    <!-- Status colors -->
+    <Color x:Key="StatusOnline">#3DA639</Color>
+    <Color x:Key="StatusOffline">#9CA3AF</Color>
+    <Color x:Key="StatusConnecting">#F7941D</Color>
+    <Color x:Key="StatusError">#ED1C24</Color>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="BrandGreenBrush" Color="{StaticResource BrandGreen}"/>
+    <SolidColorBrush x:Key="BrandGreenLightBrush" Color="{StaticResource BrandGreenLight}"/>
+    <SolidColorBrush x:Key="BrandOrangeBrush" Color="{StaticResource BrandOrange}"/>
+    <SolidColorBrush x:Key="BrandOrangeLightBrush" Color="{StaticResource BrandOrangeLight}"/>
+    <SolidColorBrush x:Key="BrandRedBrush" Color="{StaticResource BrandRed}"/>
+    <SolidColorBrush x:Key="BrandRedDarkBrush" Color="{StaticResource BrandRedDark}"/>
+    <SolidColorBrush x:Key="BrandNavyBrush" Color="{StaticResource BrandNavy}"/>
+    <SolidColorBrush x:Key="BrandNavyDarkBrush" Color="{StaticResource BrandNavyDark}"/>
+
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackground}"/>
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackground}"/>
+    <SolidColorBrush x:Key="PanelBorderBrush" Color="{StaticResource PanelBorder}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource Foreground}"/>
     <SolidColorBrush x:Key="ForegroundDimBrush" Color="{StaticResource ForegroundDim}"/>
-    <SolidColorBrush x:Key="BackgroundPanelBrush" Color="{StaticResource BackgroundPanel}"/>
+    <SolidColorBrush x:Key="ForegroundFaintBrush" Color="{StaticResource ForegroundFaint}"/>
+    <SolidColorBrush x:Key="AccentBackgroundBrush" Color="{StaticResource AccentBackground}"/>
 
-    <!-- Default button style: teal accent on dark -->
+    <SolidColorBrush x:Key="StatusOnlineBrush" Color="{StaticResource StatusOnline}"/>
+    <SolidColorBrush x:Key="StatusOfflineBrush" Color="{StaticResource StatusOffline}"/>
+    <SolidColorBrush x:Key="StatusConnectingBrush" Color="{StaticResource StatusConnecting}"/>
+    <SolidColorBrush x:Key="StatusErrorBrush" Color="{StaticResource StatusError}"/>
+
+    <!-- Logo Y-F-G gradient brushes -->
+    <LinearGradientBrush x:Key="LogoYBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#8DC63F" Offset="0"/>
+        <GradientStop Color="#3DA639" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="LogoFBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FDB913" Offset="0"/>
+        <GradientStop Color="#F7941D" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="LogoGBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#ED1C24" Offset="0"/>
+        <GradientStop Color="#C1272D" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Primary button: brand green -->
     <Style x:Key="PrimaryButton" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource BrandTealBrush}"/>
-        <Setter Property="Foreground" Value="#0A1220"/>
+        <Setter Property="Background" Value="{StaticResource BrandGreenBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="20,10"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
@@ -47,49 +92,151 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BrandTealDarkBrush}"/>
+                <Setter Property="Background" Value="{StaticResource BrandGreenLightBrush}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="{StaticResource ForegroundDimBrush}"/>
-                <Setter Property="Foreground" Value="#0A1220"/>
+                <Setter Property="Background" Value="#D1D5DB"/>
+                <Setter Property="Foreground" Value="#9CA3AF"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
+    <!-- Navy button (secondary action) -->
+    <Style x:Key="NavyButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="Background" Value="{StaticResource BrandNavyBrush}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource BrandNavyDarkBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Danger button: brand red -->
     <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-        <Setter Property="Background" Value="{StaticResource BrandErrorBrush}"/>
+        <Setter Property="Background" Value="{StaticResource BrandRedBrush}"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#CC4444"/>
+                <Setter Property="Background" Value="{StaticResource BrandRedDarkBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
-        <Setter Property="Background" Value="{StaticResource BrandNavyLightBrush}"/>
+    <!-- Secondary (outline) button -->
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#1C2A48"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <!-- TextBox -->
-    <Style TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource BackgroundPanelBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ForegroundDimBrush}"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="14,8"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="8,6"/>
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontFamily" Value="Consolas, 'Segoe UI', Tahoma"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#F9FAFB"/>
+                <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#9CA3AF"/>
+                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
-    <!-- TextBlock -->
+    <!-- TextBox: clean white with green focus ring -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="'Segoe UI', Tahoma"/>
+        <Style.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Big ID display TextBox (AnyDesk-style huge monospace) -->
+    <Style x:Key="IdDisplayBox" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Consolas, 'Courier New'"/>
+        <Setter Property="FontSize" Value="36"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{StaticResource BrandNavyBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Default TextBlock -->
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
         <Setter Property="FontFamily" Value="'Segoe UI', Tahoma"/>
+    </Style>
+
+    <!-- Header label -->
+    <Style x:Key="HeaderLabel" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDimBrush}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontFamily" Value="'Segoe UI', Tahoma"/>
+    </Style>
+
+    <!-- Card: white panel with subtle border + shadow -->
+    <Style x:Key="Card" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="20"/>
+    </Style>
+
+    <!-- Tab item style (AnyDesk-like: clean, minimal) -->
+    <Style TargetType="TabItem">
+        <Setter Property="Foreground" Value="{StaticResource ForegroundDimBrush}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Padding" Value="20,10"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            BorderBrush="Transparent"
+                            BorderThickness="0,0,0,2">
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          ContentSource="Header"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource BrandGreenBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource BrandGreenBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource BrandNavyBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>
