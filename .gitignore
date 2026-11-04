@@ -41,3 +41,5 @@ artifacts/
 # OS temp
 *.swp
 *~
+yfgdesk-windows/
+publish/
