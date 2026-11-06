@@ -1,0 +1,42 @@
+[Unit]
+Description=YFG YASTA Signaling Server
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=yfgdesk
+Group=yfgdesk
+WorkingDirectory=/opt/yfgdesk-server
+ExecStart=/opt/yfgdesk-server/YfgDesk.Server
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+
+# Environment variables — EDIT THESE for production:
+Environment=YFGDESK_DB=Data Source=/var/lib/yfgdesk/yfgdesk.db
+Environment=YFGDESK_TOKEN_SECRET=REPLACE_WITH_BASE64_OF_AT_LEAST_32_RANDOM_BYTES
+Environment=ASPNETCORE_URLS=http://0.0.0.0:7070
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+# Optional TURN configuration:
+# Environment=YFGDESK_TURN_URLS=turn:your.host:3478?transport=udp,turn:your.host:3478?transport=tcp
+# Environment=YFGDESK_TURN_SHARED_SECRET=REPLACE_WITH_64_RANDOM_HEX_CHARACTERS
+# Environment=YFGDESK_TURN_REALM=your.host
+
+# Security hardening:
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/yfgdesk
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+SystemCallFilter=@system-service
+SystemCallFilter=~@resources @privileged
+
+[Install]
+WantedBy=multi-user.target

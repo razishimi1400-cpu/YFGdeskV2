@@ -51,7 +51,6 @@ public partial class Program
         builder.Services.Configure<ForwardedHeadersOptions>(o =>
         {
             o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            o.KnownIPNetworks.Clear();
             o.KnownProxies.Clear();
         });
 
